@@ -50,15 +50,16 @@ Transfer-of-Control Operations
 #### Running the sample program
 
 The sample program takes two inputs, adds them together, and displays the output.  It is located in `test.ssc`.
+
 To run it, after you have built:
 
-    $ ./build test.ssc
+    $ make test
 
 
 #### Roadmap
 
-I'll be adding more instructions, bound to various libraries, over time.  I also plan on branding an actual language name, as well as building a compiler and switching to binary storage instead of ascii characters.
+I'll be adding more instructions, bound to various libraries, over time.  I also plan on building a compiler and companion lanuage and switching to binary storage instead of ascii characters for compiled content.  For now, all programming is done on the bare-metal level with decimal numbers.
 
-Enjoy
+Enjoy!
 
--TBRG
+-TheBigRedGeek
