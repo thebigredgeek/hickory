@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <algorithm>
 #include <stdlib.h>
 
 int main(int argc, char *argv[]){
@@ -14,6 +15,7 @@ int main(int argc, char *argv[]){
            path(argv[1]);
 
     std::ifstream fileStream;
+    std::string::iterator end_pos;
     
     fileStream.open(path);
 
@@ -24,6 +26,13 @@ int main(int argc, char *argv[]){
       while(!fileStream.eof()){
       
         getline(fileStream,temp);
+
+        if(temp.find("#") != std::string::npos){ //parse out comments
+          temp = temp.substr(0, temp.find("#")); 
+        }
+        
+        end_pos = std::remove(temp.begin(), temp.end(), ' ');
+        temp.erase(end_pos, temp.end());
 
         instructions[counter] = atoi(temp.c_str());
 

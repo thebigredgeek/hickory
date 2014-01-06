@@ -1,10 +1,10 @@
-1007
-1008
-2007
-3008
-2109
-1109
-4300
-0000
-0000
-0000
+1007 # Read into A
+1008 # Read into B
+2007 # Load A into accumulator
+3008 # Add B to value in accumulator
+2109 # Store value in accumulator into C
+1109 # Write value stored in C
+4300 # Halt
+0000 # Variable A
+0000 # Variable B
+0000 # Variable C
