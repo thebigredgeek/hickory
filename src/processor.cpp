@@ -1,173 +1,189 @@
 #include "processor.h"
-
-void Processor::load(int mem [], int length){
+#include "configuration.h"
+#include "state.h"
+void Processor::load(int instructions [], int length){
   int i;
   if(length > MEMSIZE){
     throw "Instructions are beyond allowed size";
   }
 
+  std::cout << "Hickory VM v" << VERSION << std::endl;
+  std::cout << "Loading instruction set..." << std::endl;
+
   for(i=0; i<length; i++){
-    memory[i] = mem[i];
+    std::cout << "ADDR " << i << "  ->  " << instructions[i] << std::endl;
+    memory[i] = instructions[i];
   }
 }
 
 int Processor::exec(){
   int state,
-      verb,
-      noun;
+      opCode,
+      operand,
+      reg;
 
   pointer = 0;
   accumulator = 0;
   
-  while(pointer < MEMSIZE && state > 0){
+  while(pointer < MEMSIZE){
 
-    
-    verb = memory[pointer] / 100;
-    noun = memory[pointer] % 100;
+    reg = memory[pointer]; //load into register
 
-    state = tick(verb, noun);
+    opCode = reg / 100; //pick off operation code
+    operand = reg % 100; //pick off operand
+
+    state = tick(opCode, operand); //execute
     
-    pointer++;
+    
+    switch(state){
+      case ST_HALT:
+        return state;
+        break;
+      case ST_PNTR:
+        break;
+      case ST_CONT:
+        pointer++;
+        break;
+      default:
+        throw "Statement Fault!";
+        break;
+    }
   }
 
-  return state;
+  return 0;
 }
 
-int Processor::tick(int &verb, int &noun){
-  int result = 1;
+int Processor::tick(int &opCode, int &operand){
 
-  switch(verb){
+  switch(opCode){
     
     case READ:
-      result = read(noun);
+      return read(operand);
       break;
     
     case WRITE:
-      result = write(noun);
+      return write(operand);
       break;
     
 
 
 
     case LOAD:
-      result = load(noun);
+      return load(operand);
       break;
 
     case STORE:
-      result = store(noun);
+      return store(operand);
       break;
 
 
 
 
     case ADD:
-      result = add(noun);
+      return add(operand);
       break;
 
     case SUBTRACT:
-      result = subtract(noun);
+      return subtract(operand);
       break;
 
     case DIVIDE:
-      result = divide(noun);
+      return divide(operand);
       break;
     
     case MULTIPLY:
-      result = multiply(noun);
+      return multiply(operand);
       break;
 
 
 
 
     case BRANCH:
-      result = branch(noun);
+      return branch(operand);
       break;
 
     case BRANCHNEG:
-      result = branchneg(noun);
+      return branchneg(operand);
       break;
 
     case BRANCHZERO:
-      result = branchzero(noun);
+      return branchzero(operand);
       break;
 
     case HALT:
-      result = halt(noun);
+      return halt(operand);
       break;
 
     default:
-      result = -1;
-
+      return -1;
   }
-
-  return result;
 }
 
-int Processor::read(int &noun){
-  std::cout << "&" << noun << " << ";
-  std::cin >> memory[noun];
-  return 1;
+int Processor::read(int &operand){
+  std::cout << "&" << operand << " << ";
+  std::cin >> memory[operand];
+  return ST_CONT;
 }
 
-int Processor::write(int &noun){
-  std::cout << "&" << noun << " >> " << memory[noun] << std::endl;
-  return 1;
+int Processor::write(int &operand){
+  std::cout << "&" << operand << " >> " << memory[operand] << std::endl;
+  return ST_CONT;
 }
 
-int Processor::load(int &noun){
-  accumulator = memory[noun];
-  return 1;
+int Processor::load(int &operand){
+  accumulator = memory[operand];
+  return ST_CONT;
 }
 
-int Processor::store(int &noun){
-  memory[noun] = accumulator;
-  return 1;
+int Processor::store(int &operand){
+  memory[operand] = accumulator;
+  return ST_CONT;
 }
 
-int Processor::add(int &noun){
-  accumulator += memory[noun];
-  return 1;
+int Processor::add(int &operand){
+  accumulator += memory[operand];
+  return ST_CONT;
 }
 
-int Processor::subtract(int &noun){
-  accumulator -= memory[noun];
-  return 1;
+int Processor::subtract(int &operand){
+  accumulator -= memory[operand];
+  return ST_CONT;
 }
 
-int Processor::divide(int &noun){
-  accumulator /= memory[noun];
-  return 1;
+int Processor::divide(int &operand){
+  accumulator /= memory[operand];
+  return ST_CONT;
 }
 
-int Processor::multiply(int &noun){
-  accumulator *= memory[noun];
-  return 1;
+int Processor::multiply(int &operand){
+  accumulator *= memory[operand];
+  return ST_CONT;
 }
 
 
-int Processor::branch(int &noun){
-  pointer = noun;
-  return 1;
+int Processor::branch(int &operand){
+  pointer = operand;
+  return ST_PNTR;
 }
 
-int Processor::branchneg(int &noun){
+int Processor::branchneg(int &operand){
   if(accumulator < 0){
-    pointer = noun;
-    return 2;
+    pointer = operand;
+    return ST_PNTR;
   }
-  return 1;
+  return ST_CONT;
 }
 
-int Processor::branchzero(int &noun){
+int Processor::branchzero(int &operand){
   if(accumulator == 0){
-    pointer = noun;
-    return 2;
+    pointer = operand;
+    return ST_PNTR;
   }
-  return 1;
+  return ST_CONT;
 }
 
-int Processor::halt(int &noun){
-  memory[noun] = accumulator;
-  return 0;
+int Processor::halt(int &operand){
+  memory[operand] = accumulator;
+  return ST_HALT;
 }
 

@@ -21,8 +21,6 @@ int main(int argc, char *argv[]){
 
     if(fileStream.is_open()){
 
-      std::cout << "Running '" << path << "'..." <<std::endl;
-
       while(!fileStream.eof()){
       
         getline(fileStream,temp);

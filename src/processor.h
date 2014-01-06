@@ -15,23 +15,23 @@ class Processor {
     int memory [MEMSIZE];
     int pointer;
 
-    int tick(int &verb, int &noun);
+    int tick(int &opCode, int &operand);
 
-    int read(int &noun);
-    int write(int &noun);
+    int read(int &operand);
+    int write(int &operand);
 
-    int load(int &noun);
-    int store(int &noun);
+    int load(int &operand);
+    int store(int &operand);
     
-    int add(int &noun);
-    int subtract(int &noun);
-    int divide(int &noun);
-    int multiply(int &noun);
+    int add(int &operand);
+    int subtract(int &operand);
+    int divide(int &operand);
+    int multiply(int &operand);
 
-    int branch(int &noun);
-    int branchneg(int &noun);
-    int branchzero(int &noun);
-    int halt(int &noun);
+    int branch(int &operand);
+    int branchneg(int &operand);
+    int branchzero(int &operand);
+    int halt(int &operand);
 };
 
 #endif

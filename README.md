@@ -49,9 +49,9 @@ Transfer-of-Control Operations
 
 #### Running the sample program
 
-The sample program takes two inputs, adds them together, and displays the output.  It is located in `test.ssc`.
+The sample program takes two inputs, adds them together, and displays the output.  It is located in `programs/add.ssc`.
 
-To run it, after you have built:
+To run it:
 
     $ make test
 
