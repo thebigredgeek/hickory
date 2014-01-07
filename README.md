@@ -16,6 +16,10 @@ To run it:
 
     $ make test
 
+#### Documentation
+
+https://github.com/thebigredgeek/hickory/wiki
+
 
 #### Roadmap
 
