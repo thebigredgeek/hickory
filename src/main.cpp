@@ -1,11 +1,7 @@
 #include "processor.h"
 #include "configuration.h"
 #include "compiler.h"
-#include <iostream>
-#include <fstream>
 #include <string>
-#include <algorithm>
-#include <stdlib.h>
 
 int main(int argc, char *argv[]){
   if(argc > 1){
