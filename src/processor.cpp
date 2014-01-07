@@ -3,6 +3,8 @@
 #include "state.h"
 #include "alu.h"
 #include "io.h"
+#import <iostream>
+#import <iomanip>
 
 Processor::Processor(){
   accumulator = 0;
@@ -27,10 +29,6 @@ int Processor::exec(){
 
   std::cout << "Starting execution..." << std::endl;
 
-  registry.accumulator = 0;
-  registry.instructionRegisterAddress = 0;
-
-
   std::cout << "Initial State > " << registry.instructionRegisterAddress << "  " << MEMSIZE << std::endl;
   
   while(registry.instructionRegisterAddress < MEMSIZE){
@@ -51,7 +49,6 @@ int Processor::exec(){
         registry.instructionRegisterAddress++;
         break;
       default:
-        throw "Statement Fault!";
         break;
     }
   }
