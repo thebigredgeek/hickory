@@ -1,5 +1,5 @@
-all: main.o processor.o compiler.o alu.o memory.o io.o
-	g++ main.o processor.o compiler.o alu.o memory.o io.o -o hickory
+all: main.o processor.o compiler.o alu.o memory.o io.o registry.o
+	g++ main.o processor.o compiler.o alu.o memory.o io.o registry.o -o hickory
 
 main.o:
 	g++ src/main.cpp -c
@@ -18,6 +18,9 @@ memory.o:
 
 io.o:
 	g++ src/io.cpp -c
+
+registry.o:
+	g++ src/registry.cpp -c
 
 test: all
 	./hickory programs/add.ssc

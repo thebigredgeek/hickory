@@ -6,9 +6,11 @@
 #include "memory.h"
 #include "alu.h"
 #include "io.h"
+#include "registry.h"
 
 class Processor {
   public:
+    Processor();
     void load(int instructions [], int length);
     int exec();
 
@@ -17,10 +19,11 @@ class Processor {
     Memory memory;
     ALU alu;
     IO io;
+    Registry registry;
 
-    int tick(int &opCode, int &operand);
+    int tick();
 
-    int halt(int &operand);
+    int halt();
 };
 
 #endif

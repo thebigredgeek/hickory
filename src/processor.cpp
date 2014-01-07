@@ -4,38 +4,42 @@
 #include "alu.h"
 #include "io.h"
 
+Processor::Processor(){
+  accumulator = 0;
+}
+
 void Processor::load(int instructions [], int length){
-  int i;
+  int i,
+      j;
   if(length > MEMSIZE){
     throw "Instructions are beyond allowed size";
   }
 
   std::cout << "Hickory VM v" << VERSION << std::endl;
   std::cout << "Loading instruction set..." << std::endl;
-
   for(i=0; i<length; i++){
-    std::cout << "ADDR " << i << "  ->  " << instructions[i] << std::endl;
     memory.stack[i] = instructions[i];
   }
 }
 
 int Processor::exec(){
-  int state,
-      opCode,
-      operand,
-      reg;
+  int state;
 
-  accumulator = 0;
+  std::cout << "Starting execution..." << std::endl;
+
+  registry.accumulator = 0;
+  registry.instructionRegisterAddress = 0;
+
+
+  std::cout << "Initial State > " << registry.instructionRegisterAddress << "  " << MEMSIZE << std::endl;
   
-  while(memory.pointer < MEMSIZE){
+  while(registry.instructionRegisterAddress < MEMSIZE){
 
-    reg = memory.stack[memory.pointer]; //load into register
+    registry.instructionRegisterValue = memory.stack[registry.instructionRegisterAddress]; //load into register
 
-    opCode = reg / 100; //pick off operation code
-    operand = reg % 100; //pick off operand
+    registry.pick();
 
-    state = tick(opCode, operand); //execute
-    
+    state = tick(); //execute
     
     switch(state){
       case ST_HALT:
@@ -44,7 +48,7 @@ int Processor::exec(){
       case ST_PNTR:
         break;
       case ST_CONT:
-        memory.pointer++;
+        registry.instructionRegisterAddress++;
         break;
       default:
         throw "Statement Fault!";
@@ -55,65 +59,65 @@ int Processor::exec(){
   return 0;
 }
 
-int Processor::tick(int &opCode, int &operand){
+int Processor::tick(){
 
-  switch(opCode){
+  switch(registry.operationCode){
     
     case READ:
-      return io.in(memory, operand);
+      return io.in(memory, registry);
       break;
     
     case WRITE:
-      return io.out(memory, operand);
+      return io.out(registry);
       break;
     
 
 
 
     case LOAD:
-      return memory.load(operand, accumulator);
+      return memory.load(registry);
       break;
 
     case STORE:
-      return memory.store(operand, accumulator);
+      return memory.store(registry);
       break;
 
 
 
 
     case ADD:
-      return alu.add(memory,operand,accumulator);
+      return alu.add(memory,registry);
       break;
 
     case SUBTRACT:
-      return alu.subtract(memory,operand,accumulator);
+      return alu.subtract(memory,registry);
       break;
 
     case DIVIDE:
-      return alu.divide(memory,operand,accumulator);
+      return alu.divide(memory,registry);
       break;
     
     case MULTIPLY:
-      return alu.multiply(memory,operand,accumulator);
+      return alu.multiply(memory,registry);
       break;
 
 
 
 
     case BRANCH:
-      return memory.branch(operand);
+      return memory.branch(registry);
       break;
 
     case BRANCHNEG:
-      return memory.branchneg(operand, accumulator);
+      return memory.branchneg(registry);
       break;
 
     case BRANCHZERO:
-      return memory.branchzero(operand, accumulator);
+      return memory.branchzero(registry);
       break;
 
     case HALT:
-      return halt(operand);
+      return halt();
       break;
 
     default:
@@ -121,8 +125,12 @@ int Processor::tick(int &opCode, int &operand){
   }
 }
 
-int Processor::halt(int &operand){
-  memory.stack[operand] = accumulator;
+int Processor::halt(){
+  if(registry.operand == 1){
+    registry.dump();
+    memory.dump(); 
+  }
+
   return ST_HALT;
 }
 

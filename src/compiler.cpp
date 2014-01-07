@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include "compiler.h"
 
+Compiler::Compiler(){}
+
 void Compiler::compile(int (&output)[MEMSIZE], std::string &filepath){
   int counter = 0;
 

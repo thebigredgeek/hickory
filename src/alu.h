@@ -5,10 +5,11 @@
 
 class ALU {
   public:
-    int add(Memory &memory, int &operand, int &accumulator);
-    int subtract(Memory &memory, int &operand, int &accumulator);
-    int divide(Memory &memory, int &operand, int &accumulator);
-    int multiply(Memory &memory, int &operand, int &accumulator);
+    ALU();
+    int add(Memory &memory, Registry &registry);
+    int subtract(Memory &memory, Registry &registry);
+    int divide(Memory &memory, Registry &registry);
+    int multiply(Memory &memory, Registry &registry);
 };
 
 #endif

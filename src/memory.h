@@ -2,17 +2,21 @@
 #define MEMORY_H
 
 #include "configuration.h"
+#include "registry.h"
+
 class Memory{
   public:
+    Memory();
     int stack [MEMSIZE];
-    int pointer;
 
-    int load(int &operand, int &accumulator);
-    int store(int &operand, int &accumulator);
+    int load(Registry &registry);
+    int store(Registry &registry);
 
-    int branch(int &operand);
-    int branchneg(int &operand, int &accumulator);
-    int branchzero(int &operand, int &accumulator);
+    int branch(Registry &registry);
+    int branchneg(Registry &registry);
+    int branchzero(Registry &registry);
+
+    void dump();
 };
 
 #endif
