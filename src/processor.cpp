@@ -1,6 +1,9 @@
 #include "processor.h"
 #include "configuration.h"
 #include "state.h"
+#include "alu.h"
+#include "io.h"
+
 void Processor::load(int instructions [], int length){
   int i;
   if(length > MEMSIZE){
@@ -12,7 +15,7 @@ void Processor::load(int instructions [], int length){
 
   for(i=0; i<length; i++){
     std::cout << "ADDR " << i << "  ->  " << instructions[i] << std::endl;
-    memory[i] = instructions[i];
+    memory.stack[i] = instructions[i];
   }
 }
 
@@ -22,12 +25,11 @@ int Processor::exec(){
       operand,
       reg;
 
-  pointer = 0;
   accumulator = 0;
   
-  while(pointer < MEMSIZE){
+  while(memory.pointer < MEMSIZE){
 
-    reg = memory[pointer]; //load into register
+    reg = memory.stack[memory.pointer]; //load into register
 
     opCode = reg / 100; //pick off operation code
     operand = reg % 100; //pick off operand
@@ -42,7 +44,7 @@ int Processor::exec(){
       case ST_PNTR:
         break;
       case ST_CONT:
-        pointer++;
+        memory.pointer++;
         break;
       default:
         throw "Statement Fault!";
@@ -58,56 +60,56 @@ int Processor::tick(int &opCode, int &operand){
   switch(opCode){
     
     case READ:
-      return read(operand);
+      return io.in(memory, operand);
       break;
     
     case WRITE:
-      return write(operand);
+      return io.out(memory, operand);
       break;
     
 
 
 
     case LOAD:
-      return load(operand);
+      return memory.load(operand, accumulator);
       break;
 
     case STORE:
-      return store(operand);
+      return memory.store(operand, accumulator);
       break;
 
 
 
 
     case ADD:
-      return add(operand);
+      return alu.add(memory,operand,accumulator);
       break;
 
     case SUBTRACT:
-      return subtract(operand);
+      return alu.subtract(memory,operand,accumulator);
       break;
 
     case DIVIDE:
-      return divide(operand);
+      return alu.divide(memory,operand,accumulator);
       break;
     
     case MULTIPLY:
-      return multiply(operand);
+      return alu.multiply(memory,operand,accumulator);
       break;
 
 
 
 
     case BRANCH:
-      return branch(operand);
+      return memory.branch(operand);
       break;
 
     case BRANCHNEG:
-      return branchneg(operand);
+      return memory.branchneg(operand, accumulator);
       break;
 
     case BRANCHZERO:
-      return branchzero(operand);
+      return memory.branchzero(operand, accumulator);
       break;
 
     case HALT:
@@ -119,71 +121,8 @@ int Processor::tick(int &opCode, int &operand){
   }
 }
 
-int Processor::read(int &operand){
-  std::cout << "&" << operand << " << ";
-  std::cin >> memory[operand];
-  return ST_CONT;
-}
-
-int Processor::write(int &operand){
-  std::cout << "&" << operand << " >> " << memory[operand] << std::endl;
-  return ST_CONT;
-}
-
-int Processor::load(int &operand){
-  accumulator = memory[operand];
-  return ST_CONT;
-}
-
-int Processor::store(int &operand){
-  memory[operand] = accumulator;
-  return ST_CONT;
-}
-
-int Processor::add(int &operand){
-  accumulator += memory[operand];
-  return ST_CONT;
-}
-
-int Processor::subtract(int &operand){
-  accumulator -= memory[operand];
-  return ST_CONT;
-}
-
-int Processor::divide(int &operand){
-  accumulator /= memory[operand];
-  return ST_CONT;
-}
-
-int Processor::multiply(int &operand){
-  accumulator *= memory[operand];
-  return ST_CONT;
-}
-
-
-int Processor::branch(int &operand){
-  pointer = operand;
-  return ST_PNTR;
-}
-
-int Processor::branchneg(int &operand){
-  if(accumulator < 0){
-    pointer = operand;
-    return ST_PNTR;
-  }
-  return ST_CONT;
-}
-
-int Processor::branchzero(int &operand){
-  if(accumulator == 0){
-    pointer = operand;
-    return ST_PNTR;
-  }
-  return ST_CONT;
-}
-
 int Processor::halt(int &operand){
-  memory[operand] = accumulator;
+  memory.stack[operand] = accumulator;
   return ST_HALT;
 }
 
